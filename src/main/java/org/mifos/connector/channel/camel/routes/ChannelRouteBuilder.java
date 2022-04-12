@@ -336,7 +336,8 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                         }
 
                     }
-                         tenantSpecificBpmn = mpesaFlow.replace("{dfspid}", tenantId)
+                    logger.info(ams);
+                    tenantSpecificBpmn = mpesaFlow.replace("{dfspid}", tenantId)
                                  .replace("{ams}",ams);
 
                     String amount = body.getJSONObject("amount").getString("amount");
