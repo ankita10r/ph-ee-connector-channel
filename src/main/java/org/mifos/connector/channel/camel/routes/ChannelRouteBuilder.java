@@ -318,11 +318,11 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                         String identifier = amsIdentifier.getIdentifier();
                         if (identifier.equalsIgnoreCase(secondaryIdentifierName)) {
                             ams = amsIdentifier.getValue();
-                            logger.info("Assigned from secondary" + ams);
+                            logger.info("Assigned from secondary" + amsIdentifier.getValue());
                             break;
                         } else {
                             ams = amsIdentifier.getDefaultValue();
-                            logger.info("Assigned default from secondary" + ams);
+                            logger.info("Assigned default from secondary" + amsIdentifier.getValue());
                         }
                     }//end for loop
                     for ( AMSProps.AMS amsIdentifier : amsUtils.postConstruct()) {
@@ -333,12 +333,12 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                             String temp = primaryIdentifierVal;
                             primaryIdentifierVal = secondaryIdentifierVal;
                             secondaryIdentifierVal = temp;
-                            logger.info("Assigned from primary" + ams);
+                            logger.info("Assigned from primary" + amsIdentifier.getValue());
                             break;
                         }
                         else {
                             ams = amsIdentifier.getDefaultValue();
-                            logger.info("Assigned default from primary" + ams);
+                            logger.info("Assigned default from primary" + amsIdentifier.getValue());
                         }
 
                     }
