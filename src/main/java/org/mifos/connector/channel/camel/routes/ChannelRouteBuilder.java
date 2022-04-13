@@ -288,6 +288,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
 
                     amsUtils.postConstruct();
 
+
                     Map<String, Object> extraVariables = new HashMap<>();
                     extraVariables.put("initiator", "PAYEE");
                     extraVariables.put("initiatorType", "BUSINESS");
@@ -308,7 +309,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                     String  secondaryIdentifierVal = "";
                     String primaryIdentifierName = "";
                     String  secondaryIdentifierName = "";
-                    String  finalAmsVal = null;
+                    String finalAmsVal = "value";
                     primaryIdentifierName= ((JSONObject) payer.get(0)).getString("key");
                     secondaryIdentifierName = ((JSONObject) payer.get(1)).getString("key");
                     primaryIdentifierVal = ((JSONObject) payer.get(0)).getString("value");
@@ -316,7 +317,6 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                     for ( AMSProps.AMS amsIdentifier : amsUtils.postConstruct()) {
                         logger.info(amsIdentifier.getIdentifier() + " " + amsIdentifier.getValue());
                         String identifier = amsIdentifier.getIdentifier();
-                        finalAmsVal = amsIdentifier.getValue();
                         if (identifier.equalsIgnoreCase(secondaryIdentifierName)) {
                             finalAmsVal = amsIdentifier.getValue();
                             logger.info("Assigned from secondary" + finalAmsVal);
