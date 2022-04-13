@@ -294,11 +294,10 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                     extraVariables.put("initiatorType", "BUSINESS");
                     extraVariables.put("scenario", "MPESA");
 
-                    String tenantId = "ibank-india";
-//                            exchange.getIn().getHeader("Platform-TenantId", String.class);
-//                    if (tenantId == null || !dfspIds.contains(tenantId)) {
-//                        throw new RuntimeException("Requested tenant " + tenantId + " not configured in the connector!");
-//                    }
+                    String tenantId = exchange.getIn().getHeader("Platform-TenantId", String.class);
+                    if (tenantId == null || !dfspIds.contains(tenantId)) {
+                        throw new RuntimeException("Requested tenant " + tenantId + " not configured in the connector!");
+                    }
                     extraVariables.put(TENANT_ID, tenantId);
                     String tenantSpecificBpmn;
 
@@ -318,17 +317,13 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                         logger.info(amsIdentifier.getIdentifier() + " " + amsIdentifier.getValue());
                         String identifier = amsIdentifier.getIdentifier();
                         if (identifier.equalsIgnoreCase(secondaryIdentifierName)) {
+                            logger.info(secondaryIdentifierName);
                             finalAmsVal = amsIdentifier.getValue();
                             logger.info("Assigned from secondary" + finalAmsVal);
                             break;
-                        } else {
-                            finalAmsVal = amsIdentifier.getDefaultValue();
-                            logger.info("Assigned default from secondary" + finalAmsVal);
                         }
-                    }//end for loop
-                    for ( AMSProps.AMS amsIdentifier : amsUtils.postConstruct()) {
-                        String identifier = amsIdentifier.getIdentifier();
-                        if(identifier.equalsIgnoreCase(primaryIdentifierName)){
+                        else if(identifier.equalsIgnoreCase(primaryIdentifierName)
+                                && !finalAmsVal.equals(amsIdentifier.getValue())){
                             finalAmsVal = amsIdentifier.getValue();
                             // logic to keep correct primary/secondary identifier for line 345-346
                             String temp = primaryIdentifierVal;
@@ -338,11 +333,15 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                             break;
                         }
                         else {
-                            finalAmsVal = amsIdentifier.getDefaultValue();
-                            logger.info("Assigned default from primary" + finalAmsVal);
-                        }
+                            if(identifier.equalsIgnoreCase("default")){
+                                finalAmsVal = amsIdentifier.getDefaultValue();
+                                logger.info("Assigned default from secondary" + finalAmsVal);
+                            }
 
-                    }
+
+                        }
+                    }//end for loop
+
                     logger.info("Final Value : " + finalAmsVal);
                     tenantSpecificBpmn = mpesaFlow.replace("{dfspid}", tenantId)
                                  .replace("{ams}",finalAmsVal);
