@@ -308,7 +308,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                     String  secondaryIdentifierVal = "";
                     String primaryIdentifierName = "";
                     String  secondaryIdentifierName = "";
-                    String ams = "";
+                    String  finalAmsVal = null;
                     primaryIdentifierName= ((JSONObject) payer.get(0)).getString("key");
                     secondaryIdentifierName = ((JSONObject) payer.get(1)).getString("key");
                     primaryIdentifierVal = ((JSONObject) payer.get(0)).getString("value");
@@ -317,18 +317,18 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                         logger.info(amsIdentifier.getIdentifier() + " " + amsIdentifier.getValue());
                         String identifier = amsIdentifier.getIdentifier();
                         if (identifier.equalsIgnoreCase(secondaryIdentifierName)) {
-                            ams = amsIdentifier.getValue();
+                            finalAmsVal = amsIdentifier.getValue();
                             logger.info("Assigned from secondary" + amsIdentifier.getValue());
                             break;
                         } else {
-                            ams = amsIdentifier.getDefaultValue();
+                            finalAmsVal = amsIdentifier.getDefaultValue();
                             logger.info("Assigned default from secondary" + amsIdentifier.getValue());
                         }
                     }//end for loop
                     for ( AMSProps.AMS amsIdentifier : amsUtils.postConstruct()) {
                         String identifier = amsIdentifier.getIdentifier();
                         if(identifier.equalsIgnoreCase(primaryIdentifierName)){
-                            ams = amsIdentifier.getValue();
+                            finalAmsVal = amsIdentifier.getValue();
                             // logic to keep correct primary/secondary identifier for line 345-346
                             String temp = primaryIdentifierVal;
                             primaryIdentifierVal = secondaryIdentifierVal;
@@ -337,14 +337,14 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                             break;
                         }
                         else {
-                            ams = amsIdentifier.getDefaultValue();
+                            finalAmsVal = amsIdentifier.getDefaultValue();
                             logger.info("Assigned default from primary" + amsIdentifier.getValue());
                         }
 
                     }
-                    logger.info("Final Value : " + ams);
+                    logger.info("Final Value : " + finalAmsVal);
                     tenantSpecificBpmn = mpesaFlow.replace("{dfspid}", tenantId)
-                                 .replace("{ams}",ams);
+                                 .replace("{ams}",finalAmsVal);
 
                     String amount = body.getJSONObject("amount").getString("amount");
 
