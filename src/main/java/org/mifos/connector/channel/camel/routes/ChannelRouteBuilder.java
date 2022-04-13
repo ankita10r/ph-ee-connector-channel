@@ -318,9 +318,11 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                         String identifier = amsIdentifier.getIdentifier();
                         if (identifier.equalsIgnoreCase(secondaryIdentifierName)) {
                             ams = amsIdentifier.getValue();
+                            logger.info("Assigned from secondary" + ams);
                             break;
                         } else {
                             ams = amsIdentifier.getDefaultValue();
+                            logger.info("Assigned default from secondary" + ams);
                         }
                     }//end for loop
                     for ( AMSProps.AMS amsIdentifier : amsUtils.postConstruct()) {
@@ -331,14 +333,16 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                             String temp = primaryIdentifierVal;
                             primaryIdentifierVal = secondaryIdentifierVal;
                             secondaryIdentifierVal = temp;
+                            logger.info("Assigned from primary" + ams);
                             break;
                         }
                         else {
                             ams = amsIdentifier.getDefaultValue();
+                            logger.info("Assigned default from primary" + ams);
                         }
 
                     }
-                    logger.info(ams);
+                    logger.info("Final Value : " + ams);
                     tenantSpecificBpmn = mpesaFlow.replace("{dfspid}", tenantId)
                                  .replace("{ams}",ams);
 
