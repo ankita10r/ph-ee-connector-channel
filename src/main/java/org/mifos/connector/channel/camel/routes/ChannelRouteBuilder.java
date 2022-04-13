@@ -314,7 +314,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                     primaryIdentifierVal = ((JSONObject) payer.get(0)).getString("value");
                     secondaryIdentifierVal = ((JSONObject) payer.get(1)).getString("value");
                     for ( AMSProps.AMS amsIdentifier : amsUtils.postConstruct()) {
-                        logger.info(String.valueOf(amsIdentifier));
+                        logger.info(amsIdentifier.getIdentifier() + " " + amsIdentifier.getValue());
                         String identifier = amsIdentifier.getIdentifier();
                         if (identifier.equalsIgnoreCase(secondaryIdentifierName)) {
                             ams = amsIdentifier.getValue();
