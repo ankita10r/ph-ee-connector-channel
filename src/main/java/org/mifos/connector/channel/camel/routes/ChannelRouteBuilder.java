@@ -316,13 +316,14 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                     for ( AMSProps.AMS amsIdentifier : amsUtils.postConstruct()) {
                         logger.info(amsIdentifier.getIdentifier() + " " + amsIdentifier.getValue());
                         String identifier = amsIdentifier.getIdentifier();
+                        finalAmsVal = amsIdentifier.getValue();
                         if (identifier.equalsIgnoreCase(secondaryIdentifierName)) {
                             finalAmsVal = amsIdentifier.getValue();
-                            logger.info("Assigned from secondary" + amsIdentifier.getValue());
+                            logger.info("Assigned from secondary" + finalAmsVal);
                             break;
                         } else {
                             finalAmsVal = amsIdentifier.getDefaultValue();
-                            logger.info("Assigned default from secondary" + amsIdentifier.getValue());
+                            logger.info("Assigned default from secondary" + finalAmsVal);
                         }
                     }//end for loop
                     for ( AMSProps.AMS amsIdentifier : amsUtils.postConstruct()) {
@@ -333,12 +334,12 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                             String temp = primaryIdentifierVal;
                             primaryIdentifierVal = secondaryIdentifierVal;
                             secondaryIdentifierVal = temp;
-                            logger.info("Assigned from primary" + amsIdentifier.getValue());
+                            logger.info("Assigned from primary" + finalAmsVal);
                             break;
                         }
                         else {
                             finalAmsVal = amsIdentifier.getDefaultValue();
-                            logger.info("Assigned default from primary" + amsIdentifier.getValue());
+                            logger.info("Assigned default from primary" + finalAmsVal);
                         }
 
                     }
