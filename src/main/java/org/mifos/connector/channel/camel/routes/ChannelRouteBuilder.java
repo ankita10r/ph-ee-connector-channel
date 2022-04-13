@@ -322,8 +322,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                             logger.info("Assigned from secondary" + finalAmsVal);
                             break;
                         }
-                        else if(identifier.equalsIgnoreCase(primaryIdentifierName)
-                                && !finalAmsVal.equals(amsIdentifier.getValue())){
+                        else if(identifier.equalsIgnoreCase(primaryIdentifierName)){
                             finalAmsVal = amsIdentifier.getValue();
                             // logic to keep correct primary/secondary identifier for line 345-346
                             String temp = primaryIdentifierVal;
