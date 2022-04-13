@@ -293,10 +293,11 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                     extraVariables.put("initiatorType", "BUSINESS");
                     extraVariables.put("scenario", "MPESA");
 
-                    String tenantId = exchange.getIn().getHeader("Platform-TenantId", String.class);
-                    if (tenantId == null || !dfspIds.contains(tenantId)) {
-                        throw new RuntimeException("Requested tenant " + tenantId + " not configured in the connector!");
-                    }
+                    String tenantId = "ibank-india";
+//                            exchange.getIn().getHeader("Platform-TenantId", String.class);
+//                    if (tenantId == null || !dfspIds.contains(tenantId)) {
+//                        throw new RuntimeException("Requested tenant " + tenantId + " not configured in the connector!");
+//                    }
                     extraVariables.put(TENANT_ID, tenantId);
                     String tenantSpecificBpmn;
 
@@ -313,6 +314,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                     primaryIdentifierVal = ((JSONObject) payer.get(0)).getString("value");
                     secondaryIdentifierVal = ((JSONObject) payer.get(1)).getString("value");
                     for ( AMSProps.AMS amsIdentifier : amsUtils.postConstruct()) {
+                        logger.info(String.valueOf(amsIdentifier));
                         String identifier = amsIdentifier.getIdentifier();
                         if (identifier.equalsIgnoreCase(secondaryIdentifierName)) {
                             ams = amsIdentifier.getValue();
