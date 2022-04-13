@@ -315,17 +315,17 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                     secondaryIdentifierVal = ((JSONObject) payer.get(1)).getString("value");
                     for ( AMSProps.AMS amsIdentifier : amsUtils.postConstruct()) {
                         logger.info(amsIdentifier.getIdentifier() + " " + amsIdentifier.getValue());
-                        String identifier = amsIdentifier.getIdentifier();
+                        String identifier = amsIdentifier.getIdentifier().toString();
                         if (identifier.equalsIgnoreCase(secondaryIdentifierName)) {
                             logger.info(secondaryIdentifierName);
-                            finalAmsVal = amsIdentifier.getValue();
+                            finalAmsVal = amsIdentifier.getValue().toString();
                             logger.info("Assigned from secondary" + finalAmsVal);
                             break;
                         }
                         else if(identifier.equalsIgnoreCase(primaryIdentifierName)){
                             finalAmsVal = amsIdentifier.getValue();
                             // logic to keep correct primary/secondary identifier for line 345-346
-                            String temp = primaryIdentifierVal;
+                            String temp = primaryIdentifierVal.toString();
                             primaryIdentifierVal = secondaryIdentifierVal;
                             secondaryIdentifierVal = temp;
                             logger.info("Assigned from primary" + finalAmsVal);
@@ -333,7 +333,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                         }
                         else {
                             if(identifier.equalsIgnoreCase("default")){
-                                finalAmsVal = amsIdentifier.getDefaultValue();
+                                finalAmsVal = amsIdentifier.getDefaultValue().toString();
                                 logger.info("Assigned default from secondary" + finalAmsVal);
                             }
 
