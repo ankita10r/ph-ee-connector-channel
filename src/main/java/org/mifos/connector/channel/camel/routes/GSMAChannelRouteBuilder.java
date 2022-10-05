@@ -204,10 +204,10 @@ public class GSMAChannelRouteBuilder extends ErrorHandlerRouteBuilder {
         from("rest:POST:/channel/gsma/deposit")
                 .id("gsma-payee-deposit")
                 .log(LoggingLevel.INFO, "## CHANNEL -> GSMA PAYEE deposit")
-                .unmarshal().json(JsonLibrary.Jackson, GSMATransaction.class)
                 .to("bean-validator:request")
                 .process(exchange -> {
                     GSMATransaction gsmaChannelRequest = exchange.getIn().getBody(GSMATransaction.class); // GSMA Object
+                    logger.info("GSMA Channel Request: {}", gsmaChannelRequest);
                     TransactionChannelRequestDTO channelRequest = new TransactionChannelRequestDTO(); // Fineract Object
 
                     Party payer = partyMapper(gsmaChannelRequest.getDebitParty());
