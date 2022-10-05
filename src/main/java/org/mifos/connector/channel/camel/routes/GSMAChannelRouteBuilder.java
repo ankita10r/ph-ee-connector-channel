@@ -205,6 +205,7 @@ public class GSMAChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                 .id("gsma-payee-deposit")
                 .log(LoggingLevel.INFO, "## CHANNEL -> GSMA PAYEE deposit")
                 .unmarshal().json(JsonLibrary.Jackson, GSMATransaction.class)
+                .log(LoggingLevel.INFO, "## CHANNEL -> GSMA PAYEE deposit")
                 .to("bean-validator:request")
                 .process(exchange -> {
                     GSMATransaction gsmaChannelRequest = exchange.getIn().getBody(GSMATransaction.class); // GSMA Object
