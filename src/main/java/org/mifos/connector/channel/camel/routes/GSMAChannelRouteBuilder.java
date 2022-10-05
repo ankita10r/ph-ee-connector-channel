@@ -207,7 +207,7 @@ public class GSMAChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                 .to("bean-validator:request")
                 .process(exchange -> {
                     GSMATransaction gsmaChannelRequest = exchange.getIn().getBody(GSMATransaction.class); // GSMA Object
-                    logger.info("GSMA Channel Request: {}", gsmaChannelRequest);
+                    logger.info("GSMA Channel Request: {}", gsmaChannelRequest.toString());
                     TransactionChannelRequestDTO channelRequest = new TransactionChannelRequestDTO(); // Fineract Object
 
                     Party payer = partyMapper(gsmaChannelRequest.getDebitParty());
