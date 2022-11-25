@@ -20,7 +20,7 @@ mpesa:
 timer: "PT45S"
 
 operations:
-  url: "http://bb-operations.mifos.io/api/v1"
+  url: "https://ops-bk.sandbox.fynarfin.io/api/v1"
 
 bpmn:
   flows:

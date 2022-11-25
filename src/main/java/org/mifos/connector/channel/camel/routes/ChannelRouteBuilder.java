@@ -241,6 +241,67 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                     e.getIn().setBody(objectMapper.writeValueAsString(response));
                 });
 
+        //fetch transfer details based on client correaltion id
+        from("rest:GET:/channel/transfer/{correlationId}")
+                .id("transfer-details-correlationid")
+                .log(LoggingLevel.INFO, "## CHANNEL -> inbound transferDetail request for ${header.correlationId}")
+                .process(e -> {
+                    String tenantId = e.getIn().getHeader("Platform-TenantId", String.class);
+                    if (tenantId == null || !dfspIds.contains(tenantId)) {
+                        throw new RuntimeException("Requested tenant " + tenantId + " not configured in the connector!");
+                    }
+                    Client client = clientProperties.getClient(tenantId);
+                    HttpHeaders httpHeaders = new HttpHeaders();
+                    httpHeaders.add("Platform-TenantId", tenantId);
+                    httpHeaders.add("Authorization",
+                            "Basic " + getEncoder().encodeToString((client.getClientId() + ":" + client.getClientSecret()).getBytes()));
+
+                    HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+                    ResponseEntity<String> exchange = restTemplate.exchange(restAuthHost + "/oauth/token?grant_type=client_credentials", HttpMethod.POST, entity, String.class);
+                    String token = new JSONObject(exchange.getBody()).getString("access_token");
+
+                    String correlationId = e.getIn().getHeader("correlationId", String.class);
+
+                    httpHeaders.remove("Authorization");
+                    httpHeaders.add("Authorization", "Bearer " + token);
+                    entity = new HttpEntity<>(null, httpHeaders);
+                    exchange = restTemplate.exchange(operationsUrl + "/transfers?page=0&size=20&X-CorrelationID=" + correlationId, HttpMethod.GET, entity, String.class);
+                    JSONArray contents = new JSONObject(exchange.getBody()).getJSONArray("content");
+
+                    TransactionStatusResponseDTO response = new TransactionStatusResponseDTO();
+                    if (contents.length() != 1) {
+                        response.setClientRefId("000000");
+                        response.setCompletedTimestamp(null);
+                        response.setTransactionId(correlationId);
+                        response.setTransferState(TransferState.RECEIVED);
+                        response.setTransferId(null);
+                    } else {
+                        JSONObject transfer = contents.getJSONObject(0);
+                        long workflowInstanceKey = transfer.getLong("workflowInstanceKey");
+                        String status = transfer.getString("status");
+                        response.setCompletedTimestamp(transfer.isNull("completedAt") ? null : LocalDateTime.ofInstant(Instant.ofEpochMilli(transfer.getLong("completedAt")), ZoneId.systemDefault()));
+                        response.setTransactionId(correlationId);
+                        response.setTransferState("COMPLETED".equals(status) ? TransferState.COMMITTED : TransferState.RECEIVED);
+
+                        exchange = restTemplate.exchange(operationsUrl + "/transfer/" + workflowInstanceKey, HttpMethod.GET, entity, String.class);
+                        JSONArray variables = new JSONObject(exchange.getBody()).getJSONArray("variables");
+                        String transferCode = getVariableValue(variables.iterator(), "transferCode");
+                        response.setTransferId(transferCode == null ? null : transferCode.replace("\"", ""));
+
+                        String channelRequest = getVariableValue(variables.iterator(), "channelRequest");
+                        if (channelRequest != null) {
+                            JSONObject channelRequestJson = new JSONObject(channelRequest.substring(1, channelRequest.length() - 1)
+                                    .replace("\\\"", "\""));
+                            String clientRefId = channelRequestJson.optString("clientRefId", null);
+                            response.setClientRefId(clientRefId == null ? "000000" : clientRefId);
+                        } else {
+                            response.setClientRefId("000000");
+                        }
+                    }
+
+                    e.getIn().setBody(objectMapper.writeValueAsString(response));
+                });
+
         from("rest:POST:/channel/transfer")
                 .id("inbound-transaction-request")
                 .log(LoggingLevel.INFO, "## CHANNEL -> PAYER inbound transfer request: ${body}")
