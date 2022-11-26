@@ -7,6 +7,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.bean.validator.BeanValidationException;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.mifos.connector.channel.camel.config.Client;
@@ -191,13 +193,16 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                     }
                     Client client = clientProperties.getClient(tenantId);
                     HttpHeaders httpHeaders = new HttpHeaders();
+                    HttpParams httpParams = new BasicHttpParams();
+                    httpParams.setParameter("username", client.getClientId());
+                    httpParams.setParameter("password", client.getClientSecret());
+                    httpParams.setParameter("grant_type", "password");
                     httpHeaders.add("Platform-TenantId", tenantId);
                     httpHeaders.add("Authorization",
-                            "Basic " + getEncoder().encodeToString((client.getClientId() + ":" + client.getClientSecret()).getBytes()));
+                            "Basic " + constant("Basic Y2xpZW50Og=="));
 
                     HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-                    ResponseEntity<String> exchange = restTemplate.exchange(restAuthHost + "/oauth/token?username=mifos&password=password&grant_type=password", HttpMethod.POST, entity, String.class);
-
+                    ResponseEntity<String> exchange = restTemplate.exchange(restAuthHost + "/oauth/token", HttpMethod.POST, entity, String.class);
                     String body = exchange.getBody();
                     logger.info("Body {}" + body);
                     JSONObject jsonObject = new JSONObject(body);

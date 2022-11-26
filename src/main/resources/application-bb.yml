@@ -4,9 +4,9 @@ operations:
 identity:
   channel:
     clients:
-      - clientId: channel-gorilla
-        clientSecret: p1234
+      - clientId: mifos
+        clientSecret: password
         tenant: gorilla
-      - clientId: channel-lion
-        clientSecret: p1234
+      - clientId: mifos
+        clientSecret: password
         tenant: lion

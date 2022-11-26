@@ -1,5 +1,6 @@
 camel:
   server-port: 5000
+  disable-ssl: true
   springboot:
     main-run-controller: true
   dataformat:
