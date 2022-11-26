@@ -196,8 +196,13 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                             "Basic " + getEncoder().encodeToString((client.getClientId() + ":" + client.getClientSecret()).getBytes()));
 
                     HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-                    ResponseEntity<String> exchange = restTemplate.exchange(restAuthHost + "/oauth/token?grant_type=client_credentials", HttpMethod.POST, entity, String.class);
-                    String token = new JSONObject(exchange.getBody()).getString("access_token");
+                    ResponseEntity<String> exchange = restTemplate.exchange(restAuthHost + "/oauth/token?username=mifos&password=password&grant_type=password", HttpMethod.POST, entity, String.class);
+
+                    String body = exchange.getBody();
+                    logger.info("Body {}" + body);
+                    JSONObject jsonObject = new JSONObject(body);
+                    String token = jsonObject.getString("access_token");
+                    logger.info("Token {}" + token);
 
                     String transactionId = e.getIn().getHeader("transactionId", String.class);
 
