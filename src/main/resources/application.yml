@@ -1,5 +1,5 @@
 camel:
-  server-port: 5000
+  server-port: 5001
   springboot:
     main-run-controller: true
   dataformat:
@@ -18,6 +18,11 @@ mpesa:
       enabled: true
 
 timer: "PT45S"
+
+redis:
+  host: "https://localhost"
+  port: "6379"
+
 
 server:
   port: 8080
