@@ -106,3 +106,15 @@ redis:
     enabled: true
     keyFormat: "clientCorrelationId_tenant_api"
     apiList: "/channel/transfer,/channel/collection,/channel/gsma/transaction,/channel/transactionRequest"
+
+bpmns:
+  tenants:
+    - id: "rhino"
+      flows:
+        payment-transfer: "minimal_mock_fund_transfer-{dfspid}"
+    - id: "lion"
+      flows:
+        payment-transfer: "MockPayerFundTransfer-{dfspid}"
+    - id: "gorilla"
+      flows:
+        payment-transfer: "PayerFundTransfer-{dfspid}"
