@@ -329,6 +329,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                     extraVariables.put("initiatorFspId", channelRequest.getPayer().getPartyIdInfo().getFspId());
                     String tenantSpecificBpmn;
                     String bpmn = getWorkflowForTenant(tenantId);
+                    logger.info("BPMN for tenant {} is {}", tenantId, bpmn);
                     if (channelRequest.getPayer().getPartyIdInfo().getPartyIdentifier().startsWith("6666")) {
                         tenantSpecificBpmn = bpmn.equals("default") ? specialPaymentTransferFlow.replace("{dfspid}", tenantId)
                                 : bpmn.replace("{dfspid}", tenantId);
@@ -338,7 +339,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
                                 : bpmn.replace("{dfspid}", tenantId);
                         extraVariables.put("specialTermination", false);
                     }
-
+                    logger.info("After assigning BPMN for tenant {} is {}", tenantId, tenantSpecificBpmn);
                     String transactionId = zeebeProcessStarter.startZeebeWorkflow(tenantSpecificBpmn,
                             objectMapper.writeValueAsString(channelRequest), extraVariables);
                     JSONObject response = new JSONObject();
@@ -705,7 +706,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
     }
 
     public String getWorkflowForTenant(String tenantId) {
-
+        logger.info("In get workflow by tenant id method");
         for (TenantImplementation tenant : tenantImplementationProperties.getTenants()) {
             if (tenant.getId().equals(tenantId)) {
                 return tenant.getFlows().get("payment-transfer");
