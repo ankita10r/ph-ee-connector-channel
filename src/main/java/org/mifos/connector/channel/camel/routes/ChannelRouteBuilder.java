@@ -706,7 +706,7 @@ public class ChannelRouteBuilder extends ErrorHandlerRouteBuilder {
     }
 
     public String getWorkflowForTenant(String tenantId) {
-        logger.info("In get workflow by tenant id method");
+        logger.info("In get workflow by tenant id method where tenant id is {}", tenantId);
         for (TenantImplementation tenant : tenantImplementationProperties.getTenants()) {
             logger.info("Tenant id : {}", tenant.getId());
             if (tenant.getId().equals(tenantId)) {
